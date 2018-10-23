@@ -142,7 +142,7 @@ if __name__ == "__main__":
 			plt.tight_layout()
 		
 			if save:
-				plt.savefig('Centroid_Positions/Quad_Plots_PSF_positions/TOI_{}_RW_cycle_centroid_quadplot_PSFpositions.png'.format(TOI))
+				plt.savefig('../Centroid_Positions/Quad_Plots_PSF_positions/TOI_{}_RW_cycle_centroid_quadplot_PSFpositions.png'.format(TOI))
 			else:
 				plt.show()
 			print TOI
@@ -189,7 +189,7 @@ if __name__ == "__main__":
 				plt.tight_layout()
 			
 				if save:
-					plt.savefig('BG_Plots/TOI_{}_TIC_{}_bgflux.png'.format(TOI, TIC))
+					plt.savefig('../BG_Plots/TOI_{}_TIC_{}_bgflux.png'.format(TOI, TIC))
 				else:
 					plt.show()
 
@@ -205,7 +205,7 @@ if __name__ == "__main__":
 				plt.tight_layout()
 			
 				if save:
-					plt.savefig('BG_Plots/TOI_{}_TIC_{}_bgflux.png'.format(TOI, TIC))
+					plt.savefig('../BG_Plots/TOI_{}_TIC_{}_bgflux.png'.format(TOI, TIC))
 				else:
 					plt.show()
 

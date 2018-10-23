@@ -236,7 +236,7 @@ if __name__ == "__main__":
 			plt.tight_layout()
 		
 			if save:
-				plt.savefig('RW_cycles_linearfits/TOI_{}_TIC_{}_cycles_linfit.png'.format(TOI, TIC))
+				plt.savefig('../RW_cycles_linearfits/TOI_{}_TIC_{}_cycles_linfit.png'.format(TOI, TIC))
 			else:
 				plt.show()
 			
@@ -308,7 +308,7 @@ if __name__ == "__main__":
 			plt.tight_layout()
 		
 			if save:
-				plt.savefig('RW_cycles_polyfits/TOI_{}_TIC_{}_cycles_polyfit.png'.format(TOI, TIC))
+				plt.savefig('../RW_cycles_polyfits/TOI_{}_TIC_{}_cycles_polyfit.png'.format(TOI, TIC))
 			else:
 				plt.show()
 			

@@ -169,7 +169,7 @@ if __name__ == "__main__":
 		ax2.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
 		
 		ax2.set_title('m = {:.3f} ;  c = {:.3f} ;  $\chi^2$ : {:.3f}'.format(params_best[0], params_best[1], chi), **axis_font)
-		plt.savefig('RW_cycle_plots2/TOI_{}_RWcycles.png'.format(TOI))
+		plt.savefig('../RW_cycle_plots2/TOI_{}_RWcycles.png'.format(TOI))
 		
 
 
