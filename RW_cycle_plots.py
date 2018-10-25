@@ -72,7 +72,7 @@ if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-fn', '--filename', type=str, nargs='*')
 	parser.add_argument('-s', '--save', action='store_true')
-	parser.add_argument('-sec', '--sector', type=int)
+#	parser.add_argument('-sec', '--sector', type=int)
 	parser.add_argument('-bg', '--background', action='store_true')
 	parser.add_argument('-c', '--centroid', action='store_true')
 	parser.add_argument('-pf', '--phase_fold', action='store_true')
@@ -145,13 +145,14 @@ if __name__ == "__main__":
 				plt.savefig('../Centroid_Positions/Quad_Plots_PSF_positions/TOI_{}_RW_cycle_centroid_quadplot_PSFpositions.png'.format(TOI))
 			else:
 				plt.show()
-			print TOI
+			print(TOI)
 	
 	if bg:
 		for i in range(len(fn)):
 			
 			hdr = fits.open(fn[i])[0].header
 			TIC = hdr['TICID']
+			cam = hdr['CAMERA']
 
 			sec = np.int(hdr['SECTOR'])
 			if sec == 2:
@@ -178,7 +179,7 @@ if __name__ == "__main__":
 				ax1.plot(time, bg_flux, 'ko', markersize=1.5)
 				ax1.set_xlabel('Time [BJD - 2457000]', **axis_font)
 				ax1.set_ylabel('BG Flux [e$^-$ / s]', **axis_font)
-				ax1.set_title('TOI: {}  ;   TIC: {}  ; Background Flux; Fold Period: 2.5 days'.format(TOI, TIC), **axis_font)
+				ax1.set_title('TOI: {}  ;   TIC: {}  ; Background Flux; Fold Period: 2.5 days;  Camera: {}'.format(TOI, TIC, cam), **axis_font)
 			
 				ax2 = fig.add_subplot(212)
 			
@@ -200,7 +201,7 @@ if __name__ == "__main__":
 				plt.plot(time, bg_flux, 'ko', markersize=1.5)
 				plt.xlabel('Time [BJD - 2457000]', **axis_font)
 				plt.ylabel('BG Flux [e$^-$ / s]', **axis_font)
-				plt.title('TOI: {}  ;   TIC: {}  ; Background Flux'.format(TOI, TIC), **axis_font)
+				plt.title('TOI: {}  ;   TIC: {}  ; Background Flux;  Camera:  {}'.format(TOI, TIC, cam), **axis_font)
 				
 				plt.tight_layout()
 			
@@ -209,7 +210,7 @@ if __name__ == "__main__":
 				else:
 					plt.show()
 
-			print TOI
+			print(TOI)
 
 
 

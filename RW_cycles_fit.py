@@ -77,11 +77,11 @@ def dataload(filename):
 			time5 = np.append(time5, time[i])
 			err5 = np.append(err5, flux_err[i])
 	
-	time1 -= time1[0]
-	time2 -= time2[0]
-	time3 -= time3[0]
-	time4 -= time4[0]
-	time5 -= time5[0]
+#	time1 -= time1[0]
+#	time2 -= time2[0]
+#	time3 -= time3[0]
+#	time4 -= time4[0]
+#	time5 -= time5[0]
 	
 	return time1, flux1, err1, time2, flux2, err2, time3, flux3, err3, time4, flux4, err4, time5, flux5, err5
 		
@@ -135,19 +135,147 @@ def lin_fit(time, flux, flux_err):
 	
 	return lin_model, result.x, result.fun
 	
+def cycles_plot(time1, flux1, model1, chi1, time2, flux2, model2, chi2, time3, flux3, model3, chi3, time4, flux4, model4, chi4, time5, flux5, model5, chi5, coeffs1, coeffs2, coeffs3, coeffs4, coeffs5, TIC, TOI, period, epoc):
+
+	fig = plt.figure(figsize=(20, 10))
+			
+	ax1 = fig.add_subplot(321)
+			
+	ax1.plot(time1, flux1, 'ko', markersize=1)
+	ax1.plot(time2, flux2, 'ko', markersize=1)
+	ax1.plot(time3, flux3, 'ko', markersize=1)
+	ax1.plot(time4, flux4, 'ko', markersize=1)
+	ax1.plot(time5, flux5, 'ko', markersize=1)
+			
+	ax1.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax1.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
+	ax1.set_title('TIC: {} ;  TOI: {} ; Epoch: {:.2f} ; Period: {:.2f} days'.format(TIC, TOI, epoc, period), **axis_font)
+		
+	ax2 = fig.add_subplot(322)
+	ax2.plot(time1, flux1, 'ko', markersize=1)
+	ax2.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax2.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
+		
+	ax3 = fig.add_subplot(323)
+	ax3.plot(time2, flux2, 'ko', markersize=1)
+	ax3.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax3.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
+			
+	ax4 = fig.add_subplot(324)
+	ax4.plot(time3, flux3, 'ko', markersize=1)
+	ax4.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax4.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
+			
+	ax5 = fig.add_subplot(325)
+	ax5.plot(time4, flux4, 'ko', markersize=1)
+	ax5.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax5.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
+		
+	ax6 = fig.add_subplot(326)
+	ax6.plot(time5, flux5, 'ko', markersize=1)
+	ax6.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax6.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
 	
+	if pf:
+		ax1.plot(time1, model1, 'r--')
+		ax1.plot(time2, model2, 'r--')
+		ax1.plot(time3, model3, 'r--')
+		ax1.plot(time4, model4, 'r--')
+		ax1.plot(time5, model5, 'r--')
+				
+		ax2.plot(time1, model1, 'r--')
+		ax3.plot(time2, model2, 'r--')
+		ax4.plot(time3, model3, 'r--')
+		ax5.plot(time4, model4, 'r--')
+		ax6.plot(time5, model5, 'r--')
+		
+	if lin:
+		ax2.set_title('RW Cycle 1. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs1[1], coeffs1[0], chi1), **axis_font)
+		ax3.set_title('RW Cycle 2. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs2[1], coeffs2[0], chi2), **axis_font)
+		ax4.set_title('RW Cycle 3. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs3[1], coeffs3[0], chi3), **axis_font)
+		ax5.set_title('RW Cycle 4. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs4[1], coeffs4[0], chi4), **axis_font)
+		ax6.set_title('RW Cycle 5. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs5[1], coeffs5[0], chi5), **axis_font)
+
+	else:
+		ax2.set_title('RW Cycle 1. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs1[0], coeffs1[1], coeffs1[2], coeffs1[3], chi1), **axis_font)
+		ax3.set_title('RW Cycle 2. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs2[0], coeffs2[1], coeffs2[2], coeffs2[3], chi2), **axis_font)
+		ax4.set_title('RW Cycle 3. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs3[0], coeffs3[1], coeffs3[2], coeffs3[3], chi3), **axis_font)
+		ax5.set_title('RW Cycle 4. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs4[0], coeffs4[1], coeffs4[2], coeffs4[3], chi4), **axis_font)
+		ax6.set_title('RW Cycle 5. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs5[0], coeffs5[1], coeffs5[2], coeffs5[3], chi5), **axis_font)
+	
+	plt.tight_layout()
+		
+	if save:
+		plt.savefig('../RW_cycles_linearfits/TOI_{}_TIC_{}_cycles_linfit.png'.format(TOI, TIC))
+	else:			
+		plt.show()
+			
+	print(TOI)
+	
+def detrend_plot(time1, flux1, model1, chi1, time2, flux2, model2, chi2, time3, flux3, model3, chi3, time4, flux4, model4, chi4, time5, flux5, model5, chi5, TIC, TOI, period, epoc):
+	
+	flux_rel1 = flux1 / model1
+	flux_rel2 = flux2 / model2
+	flux_rel3 = flux3 / model3
+	flux_rel4 = flux4 / model4
+	flux_rel5 = flux5 / model5
+	
+	fig = plt.figure(figsize=(20, 10))
+			
+	ax1 = fig.add_subplot(211)
+			
+	ax1.plot(time1, flux1, 'ko', markersize=1)
+	ax1.plot(time2, flux2, 'ko', markersize=1)
+	ax1.plot(time3, flux3, 'ko', markersize=1)
+	ax1.plot(time4, flux4, 'ko', markersize=1)
+	ax1.plot(time5, flux5, 'ko', markersize=1)
+	
+	ax1.plot(time1, model1, 'r--')
+	ax1.plot(time2, model2, 'r--')
+	ax1.plot(time3, model3, 'r--')
+	ax1.plot(time4, model4, 'r--')
+	ax1.plot(time5, model5, 'r--')
+				
+	ax1.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax1.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
+	ax1.set_title('TIC: {} ;  TOI: {} ; Epoch: {:.2f} BTJD  ; Period: {:.2f} days'.format(TIC, TOI, epoc, period), **axis_font)
+		
+	ax2 = fig.add_subplot(212)
+			
+	ax2.plot(time1, flux_rel1, 'ko', markersize=1)
+	ax2.plot(time2, flux_rel2, 'ko', markersize=1)
+	ax2.plot(time3, flux_rel3, 'ko', markersize=1)
+	ax2.plot(time4, flux_rel4, 'ko', markersize=1)
+	ax2.plot(time5, flux_rel5, 'ko', markersize=1)
+				
+	ax2.set_xlabel('Time [BJD - 2457000]', **axis_font)
+	ax2.set_ylabel('Relative Flux', **axis_font)
+	ax2.set_title('Linear Detrending - $\chi^2_1 \ = $ {:.2f}; $\chi^2_2 \ = $ {:.2f}; $\chi^2_3 \ = $ {:.2f}; $\chi^2_4 \ = $ {:.2f}; $\chi^2_5 \ = $ {:.2f}'.format(chi1, chi2, chi3, chi4, chi5), **axis_font)
+				
+	plt.tight_layout()
+				
+	if save:
+		plt.savefig('../RW_cycles_detrended/TOI_{}_TIC_{}_detrended_linear.png'.format(TOI, TIC))
+	else:
+		plt.show()
+			
+	print(TOI)
 
 if __name__ == "__main__":
 	parser = argparse.ArgumentParser()
 	parser.add_argument('-fn', '--filename', type=str, nargs='*')
 	parser.add_argument('-s', '--save', action='store_true')
 	parser.add_argument('-l', '--linear', action='store_true')
+	parser.add_argument('-dt', '--detrend', action='store_true')
+	parser.add_argument('-pf', '--plotfit', action='store_true')
 	
 	args = parser.parse_args()
 	
 	fn = args.filename
 	save = args.save
 	lin = args.linear
+	dt = args.detrend
+	pf = args.plotfit
 
 	axis_font = {'fontname':'DejaVu Sans', 'size':'15'}
 	
@@ -165,155 +293,60 @@ if __name__ == "__main__":
 		df2 = df.loc[TIC]
 		if len(df2) == length:
 			TOI = np.int(df2.loc['toi_id'])            	  	#TIC ID for the object - used for plot title
+			epoc = df2.loc['Epoc']
+			period = df2.loc['Period']
 		else:
 			df3 = df2.iloc[0]
 			TOI = np.int(df3.loc['toi_id'])
+			epoc = df3.loc['Epoc']
+			period = df3.loc['Period']
 
 		time1, flux1, err1, time2, flux2, err2, time3, flux3, err3, time4, flux4, err4, time5, flux5, err5 = dataload(fn[i])
 		
-		if lin:
+		if dt:
 			
-			lin_model1, coeffs1, chi1 = lin_fit(time1, flux1, err1)
-			lin_model2, coeffs2, chi2 = lin_fit(time2, flux2, err2)
-			lin_model3, coeffs3, chi3 = lin_fit(time3, flux3, err3)
-			lin_model4, coeffs4, chi4 = lin_fit(time4, flux4, err4)
-			lin_model5, coeffs5, chi5 = lin_fit(time5, flux5, err5)
-			
-			fig = plt.figure(figsize=(20, 10))
-			
-			ax1 = fig.add_subplot(321)
-			
-			ax1.plot(time1, flux1, 'ko', markersize=1)
-			ax1.plot(time1, lin_model1, 'r--')
-			ax1.plot(time2 + 2.5, flux2, 'ko', markersize=1)
-			ax1.plot(time2 + 2.5, lin_model2, 'r--')
-			ax1.plot(time3 + 5.0, flux3, 'ko', markersize=1)
-			ax1.plot(time3 + 5.0, lin_model3, 'r--')
-			ax1.plot(time4 + 7.5, flux4, 'ko', markersize=1)
-			ax1.plot(time4 + 7.5, lin_model4, 'r--')
-			ax1.plot(time5 + 10.0, flux5, 'ko', markersize=1)
-			ax1.plot(time5 + 10.0, lin_model5, 'r--')
-		
-			ax1.set_xlabel('Time [days]', **axis_font)
-			ax1.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax1.set_title('TIC: {} ;  TOI: {}'.format(TIC, TOI), **axis_font)
-		
-			ax2 = fig.add_subplot(322)
-			ax2.plot(time1, flux1, 'ko', markersize=1)
-			ax2.plot(time1, lin_model1, 'r--')
-			ax2.set_xlabel('Time [days]', **axis_font)
-			ax2.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax2.set_title('RW Cycle 1. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs1[1], coeffs1[0], chi1), **axis_font)
-		
-			ax3 = fig.add_subplot(323)
-			ax3.plot(time2, flux2, 'ko', markersize=1)
-			ax3.plot(time2, lin_model2, 'r--')
-			ax3.set_xlabel('Time [days]', **axis_font)
-			ax3.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax3.set_title('RW Cycle 2. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs2[1], coeffs2[0], chi2), **axis_font)
-			
-			ax4 = fig.add_subplot(324)
-			ax4.plot(time3, flux3, 'ko', markersize=1)
-			ax4.plot(time3, lin_model3, 'r--')
-			ax4.set_xlabel('Time [days]', **axis_font)
-			ax4.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax4.set_title('RW Cycle 3. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs3[1], coeffs3[0], chi3), **axis_font)
-			
-			ax5 = fig.add_subplot(325)
-			ax5.plot(time4, flux4, 'ko', markersize=1)
-			ax5.plot(time4, lin_model4, 'r--')
-			ax5.set_xlabel('Time [days]', **axis_font)
-			ax5.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax5.set_title('RW Cycle 4. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs4[1], coeffs4[0], chi4), **axis_font)
-		
-			ax6 = fig.add_subplot(326)
-			ax6.plot(time5, flux5, 'ko', markersize=1)
-			ax6.plot(time5, lin_model5, 'r--')
-			ax6.set_xlabel('Time [days]', **axis_font)
-			ax6.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax6.set_title('RW Cycle 5. (m = {:.2f} ;  c = {:.2f} ;  $\chi^2$ = {:.2f})'.format(coeffs5[1], coeffs5[0], chi5), **axis_font)
-			
-			plt.tight_layout()
-		
-			if save:
-				plt.savefig('../RW_cycles_linearfits/TOI_{}_TIC_{}_cycles_linfit.png'.format(TOI, TIC))
+			if lin:
+				
+				lin_model1, coeffs1, chi1 = lin_fit(time1 - time1[0], flux1, err1)
+				lin_model2, coeffs2, chi2 = lin_fit(time2 - time2[0], flux2, err2)
+				lin_model3, coeffs3, chi3 = lin_fit(time3 - time3[0], flux3, err3)
+				lin_model4, coeffs4, chi4 = lin_fit(time4 - time4[0], flux4, err4)
+				lin_model5, coeffs5, chi5 = lin_fit(time5 - time5[0], flux5, err5)
+				
+				detrend_plot(time1, flux1, lin_model1, chi1, time2, flux2, lin_model2, chi2, time3, flux3, lin_model3, chi3, time4, flux4, lin_model4, chi4, time5, flux5, lin_model5, chi5, TIC, TOI, period, epoc)
+	
 			else:
-				plt.show()
+				
+				poly_model1, coeffs1, chi1 = poly_fit(time1 - time1[0], flux1, err1)
+				poly_model2, coeffs2, chi2 = poly_fit(time2 - time2[0], flux2, err2)
+				poly_model3, coeffs3, chi3 = poly_fit(time3 - time3[0], flux3, err3)
+				poly_model4, coeffs4, chi4 = poly_fit(time4 - time4[0], flux4, err4)
+				poly_model5, coeffs5, chi5 = poly_fit(time5 - time5[0], flux5, err5)
+		
+				detrend_plot(time1, flux1, poly_model1, chi1, time2, flux2, poly_model2, chi2, time3, flux3, poly_model3, chi3, time4, flux4, poly_model4, chi4, time5, flux5, poly_model5, chi5, TIC, TOI, period, epoc)
+
+		else:
+		
+			if lin:
 			
-			print TOI
+				lin_model1, coeffs1, chi1 = lin_fit(time1 - time1[0], flux1, err1)
+				lin_model2, coeffs2, chi2 = lin_fit(time2 - time2[0], flux2, err2)
+				lin_model3, coeffs3, chi3 = lin_fit(time3 - time3[0], flux3, err3)
+				lin_model4, coeffs4, chi4 = lin_fit(time4 - time4[0], flux4, err4)
+				lin_model5, coeffs5, chi5 = lin_fit(time5 - time5[0], flux5, err5)
+		
+				cycles_plot(time1, flux1, lin_model1, chi1, time2, flux2, lin_model2, chi2, time3, flux3, lin_model3, chi3, time4, flux4, lin_model4, chi4, time5, flux5, lin_model5, chi5, coeffs1, coeffs2, coeffs3, coeffs4, coeffs5, TIC, TOI, period, epoc)
 			
-			
-		else:	
+			else:	
 		
-			poly_model1, coeffs1, chi1 = poly_fit(time1, flux1, err1)
-			poly_model2, coeffs2, chi2 = poly_fit(time2, flux2, err2)
-			poly_model3, coeffs3, chi3 = poly_fit(time3, flux3, err3)
-			poly_model4, coeffs4, chi4 = poly_fit(time4, flux4, err4)
-			poly_model5, coeffs5, chi5 = poly_fit(time5, flux5, err5)
+				poly_model1, coeffs1, chi1 = poly_fit(time1 - time1[0], flux1, err1)
+				poly_model2, coeffs2, chi2 = poly_fit(time2 - time2[0], flux2, err2)
+				poly_model3, coeffs3, chi3 = poly_fit(time3 - time3[0], flux3, err3)
+				poly_model4, coeffs4, chi4 = poly_fit(time4 - time4[0], flux4, err4)
+				poly_model5, coeffs5, chi5 = poly_fit(time5 - time5[0], flux5, err5)
 		
-			fig = plt.figure(figsize=(20, 10))
-		
-			ax1 = fig.add_subplot(321)
-		
-			ax1.plot(time1, flux1, 'ko', markersize=1)
-			ax1.plot(time1, poly_model1, 'r--')
-			ax1.plot(time2 + 2.5, flux2, 'ko', markersize=1)
-			ax1.plot(time2 + 2.5, poly_model2, 'r--')
-			ax1.plot(time3 + 5.0, flux3, 'ko', markersize=1)
-			ax1.plot(time3 + 5.0, poly_model3, 'r--')
-			ax1.plot(time4 + 7.5, flux4, 'ko', markersize=1)
-			ax1.plot(time4 + 7.5, poly_model4, 'r--')
-			ax1.plot(time5 + 10.0, flux5, 'ko', markersize=1)
-			ax1.plot(time5 + 10.0, poly_model5, 'r--')
-		
-			ax1.set_xlabel('Time [days]', **axis_font)
-			ax1.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax1.set_title('TIC: {} ;  TOI: {}'.format(TIC, TOI), **axis_font)
-		
-			ax2 = fig.add_subplot(322)
-			ax2.plot(time1, flux1, 'ko', markersize=1)
-			ax2.plot(time1, poly_model1, 'r--')
-			ax2.set_xlabel('Time [days]', **axis_font)
-			ax2.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax2.set_title('RW Cycle 1. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs1[0], coeffs1[1], coeffs1[2], coeffs1[3], chi1), **axis_font)
-		
-			ax3 = fig.add_subplot(323)
-			ax3.plot(time2, flux2, 'ko', markersize=1)
-			ax3.plot(time2, poly_model2, 'r--')
-			ax3.set_xlabel('Time [days]', **axis_font)
-			ax3.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax3.set_title('RW Cycle 2. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs2[0], coeffs2[1], coeffs2[2], coeffs2[3], chi2), **axis_font)
-			
-			ax4 = fig.add_subplot(324)
-			ax4.plot(time3, flux3, 'ko', markersize=1)
-			ax4.plot(time3, poly_model3, 'r--')
-			ax4.set_xlabel('Time [days]', **axis_font)
-			ax4.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax4.set_title('RW Cycle 3. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs3[0], coeffs3[1], coeffs3[2], coeffs3[3], chi3), **axis_font)
-			
-			ax5 = fig.add_subplot(325)
-			ax5.plot(time4, flux4, 'ko', markersize=1)
-			ax5.plot(time4, poly_model4, 'r--')
-			ax5.set_xlabel('Time [days]', **axis_font)
-			ax5.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax5.set_title('RW Cycle 4. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs4[0], coeffs4[1], coeffs4[2], coeffs4[3], chi4), **axis_font)
-		
-			ax6 = fig.add_subplot(326)
-			ax6.plot(time5, flux5, 'ko', markersize=1)
-			ax6.plot(time5, poly_model5, 'r--')
-			ax6.set_xlabel('Time [days]', **axis_font)
-			ax6.set_ylabel('SAP Flux [e$^-$ / s]', **axis_font)
-			ax6.set_title('RW Cycle 5. (a={:.2f}, b={:.2f}, c={:.2f}, d={:.2f}, $\chi^2$={:.2f})'.format(coeffs5[0], coeffs5[1], coeffs5[2], coeffs5[3], chi5), **axis_font)
-			
-			plt.tight_layout()
-		
-			if save:
-				plt.savefig('../RW_cycles_polyfits/TOI_{}_TIC_{}_cycles_polyfit.png'.format(TOI, TIC))
-			else:
-				plt.show()
-			
-			print TOI
-		
+				cycles_plot(time1, flux1, poly_model1, chi1, time2, flux2, poly_model2, chi2, time3, flux3, poly_model3, chi3, time4, flux4, poly_model4, chi4, time5, flux5, poly_model5, chi5, coeffs1, coeffs2, coeffs3, coeffs4, coeffs5, TIC, TOI, period, epoc)
+
 
 		
 		
