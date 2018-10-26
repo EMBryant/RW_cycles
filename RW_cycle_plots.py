@@ -7,12 +7,31 @@ from scipy.stats import sem
 import argparse
 import pandas
 
+def corr_load(filename):
+	hdul = fits.open(filename)
+	data = hdul[1].data
+	
+	time_whole = data['TIME']
+	flux_whole = data['SAP_BKG']
+	flags = data['QUALITY']
+	y_whole = data['MOM_CENTR1']
+	x_whole = data['MOM_CENTR2']
+
+	flag_inds = np.where(flags > 0)
+	
+	time = np.delete(time_whole, flag_inds)
+	flux = np.delete(flux_whole, flag_inds)
+	row = np.delete(x_whole, flag_inds)
+	col = np.delete(y_whole, flag_inds)
+	
+	return time, flux, row, col
+	
 def pos_load(filename, epoch):
 	hdul = fits.open(filename)
 	data = hdul[1].data
 	
-	y_whole = data['PSF_CENTR1']
-	x_whole = data['PSF_CENTR2']
+	y_whole = data['MOM_CENTR1']
+	x_whole = data['MOM_CENTR2']
 	time_whole = data['TIME']
 	flags_whole = data['QUALITY']
 	
@@ -76,6 +95,7 @@ if __name__ == "__main__":
 	parser.add_argument('-bg', '--background', action='store_true')
 	parser.add_argument('-c', '--centroid', action='store_true')
 	parser.add_argument('-pf', '--phase_fold', action='store_true')
+	parser.add_argument('-fc', '--flux_corr', action='store_true')
 	
 	args = parser.parse_args()
 
@@ -86,28 +106,75 @@ if __name__ == "__main__":
 	cen = args.centroid
 	bg = args.background
 	pf = args.phase_fold
+	fc = args.flux_corr
 	
 	df = pandas.read_csv('/home/astro/phrvdf/tess_data_alerts/TOIs_20181016.csv', index_col='tic_id')		#.csv file containing info on parameters (period, epoch, ID, etc.) of all TOIs
-	length = len(df.iloc[0])	
+	length = len(df.iloc[0])
+	
+	for i in range(len(fn)):
+	
+		hdr = fits.open(fn[i])[0].header
+		TIC = hdr['TICID']
+		cam = hdr['CAMERA']
 
-	if cen:
-		for i in range(len(fn)):
+		sec = np.int(hdr['SECTOR'])
+		if sec == 2:
+			epoch = 1371.13
+		elif sec == 1:
+			epoch = 1342.19
 		
-			hdr = fits.open(fn[i])[0].header
-			TIC = hdr['TICID']
-
-			sec = np.int(hdr['SECTOR'])
-			if sec == 2:
-				epoch = 1371.13
-			elif sec == 1:
-				epoch = 1342.19
+		df2 = df.loc[TIC]
+	
+		if len(df2) == length:
+			TOI = np.int(df2.loc['toi_id'])            	  	#TIC ID for the object - used for plot title
+		else:
+			df3 = df2.iloc[0]
+			TOI = np.int(df3.loc['toi_id'])	
+		
+		if fc:
 			
-			df2 = df.loc[TIC]
-			if len(df2) == length:
-				TOI = np.int(df2.loc['toi_id'])            	  	#TIC ID for the object - used for plot title
+			time, flux, row, col = corr_load(fn[i])
+			
+			fig = plt.figure(figsize=(20, 10))
+			
+			ax1 = fig.add_subplot(221)
+			
+			ax1.plot(flux, row, 'bo', markersize=1.5)
+			ax1.set_xlabel('BG Flux [e$^-$ / s]', **axis_font)
+			ax1.set_ylabel('Row Centroid Position [pix]', **axis_font)
+			ax1.set_title('TIC: {} ; TOI: {} ; Camera: {}'.format(TIC, TOI, cam), **axis_font)
+			
+			ax2 = fig.add_subplot(222)
+			
+			ax2.plot(flux, col, 'ro', markersize=1.5)
+			ax2.set_xlabel('BG Flux [e$^-$ / s]', **axis_font)
+			ax2.set_ylabel('Column Centroid Position [pix]', **axis_font)
+			
+			ax3 = fig.add_subplot(223)
+			
+			ax3.plot(time, flux, 'ko', markersize=1.5)
+			ax3.set_xlabel('Time [BJD - 2457000]', **axis_font)
+			ax3.set_ylabel('BG Flux [e$^-$ / s]', **axis_font)
+			
+			ax4 = fig.add_subplot(224)
+			
+			ax4.plot(time, row, 'bo', markersize=1.5, label='Row Position')
+			ax4.set_ylabel('Row Centroid Position [pix]', **axis_font)
+			ax4.set_xlabel('Time [BJD - 2457000]', **axis_font)
+			ax5 = ax4.twinx()
+			ax5.plot(time, col, 'ro', markersize=1.5, label='Column Position')
+			ax5.set_ylabel('Column Centroid Position [pix]', **axis_font)
+
+			plt.tight_layout()
+			
+			if save:
+				plt.savefig('../BGFlux_Position_Correlation_Plots/TOI_{}_RW_cycle_centroid_quadplot_PSFpositions.png'.format(TOI))
 			else:
-				df3 = df2.iloc[0]
-				TOI = np.int(df3.loc['toi_id'])
+				plt.show()
+			print(TOI)
+	
+
+		if cen:
 
 			time, x, y, time_f, x_f, y_f = pos_load(fn[i], epoch)
 			phase, phase_order = cycle_fold(time, epoch, 2.5)
@@ -147,26 +214,8 @@ if __name__ == "__main__":
 				plt.show()
 			print(TOI)
 	
-	if bg:
-		for i in range(len(fn)):
+		if bg:
 			
-			hdr = fits.open(fn[i])[0].header
-			TIC = hdr['TICID']
-			cam = hdr['CAMERA']
-
-			sec = np.int(hdr['SECTOR'])
-			if sec == 2:
-				epoch = 1371.13
-			elif sec == 1:
-				epoch = 1342.19
-			
-			df2 = df.loc[TIC]
-			if len(df2) == length:
-				TOI = np.int(df2.loc['toi_id'])            	  	#TIC ID for the object - used for plot title
-			else:
-				df3 = df2.iloc[0]
-				TOI = np.int(df3.loc['toi_id'])
-
 			time, bg_flux, time_section, bg_section = bg_load(fn[i], sec)
 			
 			if pf:
